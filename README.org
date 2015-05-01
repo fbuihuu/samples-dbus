@@ -1,0 +1,58 @@
+#+TITLE: A sample code illustrating basic use of D-BUS
+
+* Introduction
+
+This sample code illustrates how to get DBUS communication up and
+running by providing a minimalistic client server application based on
+the (low-level) dbus library /libdbus/ and also on GLib wrapper
+library /GDBus/.
+
+/libdbus/ is the library provided by D-Bus itself, and exposes a
+low-level API.
+
+/GDBus/ is the support of D-Bus in /GLib/ since 2.26. It simplifies
+the details of D-Bus programming is intended to replace the DBus-GLib
+bindings. It provides a [[https://developer.gnome.org/gio/2.26/gdbus-convenience.html][high-level]] and a [[https://developer.gnome.org/gio/2.26/gdbus-lowlevel.html][low-level]] APIs.
+
+* Server
+
+The server exports a single object, which can be reached at
+/org/example/TestObject.
+
+This object implements the /org.example.TestInterface/ which provides
+a couple of basic services/methods: Ping, Echo, EmitSignal and Quit.
+
+TestObject also implements both /org.freedesktop.DBus.Introspectable/
+interface which allows object instrospection. Therefore a client or a
+D-Bus debugger tool, such as d-feet(1), can inspect and list the
+interfaces, methods, and signals of our object by using those
+interfaces.
+
+The server code uses the low-level API provided by /libdbus/, except
+for the event loop which is provided by GLib for the sake of
+simplicity.
+
+* Client
+
+The client is an application which runs unit tests: it connects to the
+server and calls all services provided by the server and check their
+result.
+
+Unlike the server, the client relies on /GDBus/ library using both the
+high-level and low-level APIs. The other GLib wrapper library
+/dbus-glib/ is obsolete and shouldn't be used in new application.
+
+Its main purpose is to show how to *call methods* on a remote object
+using a *proxy* object and how to *listen a signal*.
+
+* Installation
+
+The followng dependencies are required in order to build successfully
+this project:
+
+- libdbus       (server)
+- dbus-glib     (server event loop)
+- glib          (client)
+
+To generate server and client binaries, running 'make' should be
+fine. It will generate two binaries: /dbus-client/ and /dbus-server/.
